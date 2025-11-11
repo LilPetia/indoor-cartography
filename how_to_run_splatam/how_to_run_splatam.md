@@ -1,8 +1,8 @@
-Введение
+# Введение
 
 Здесь я опишу, как запустить splatam для реконструкции 3d сцены из гауссиан по видео формата .svo2. Я запускал всё на windows, но для ubuntu всё тоже должно работать. Для запуска по этой инструкции необходима anaconda и установленный ZED SDK.
 
-Установка
+## Установка
 
 Сначала надо установить splatam.
 Для этого нужно клонировать репозиторий https://github.com/spla-tam/SplaTAM.git в любую удобную папку. Затем необходимо открыть командную строку anaconda в этой папке.
@@ -11,6 +11,7 @@
 Затем необходимо установить Open3d. Я устанавливал его в ту же среду anaconda, что и splatam. Чтобы установить Open3d с поддержкой cuda необходимо собрать его из исходников.
 Для этого нужно клонировать репозиторий https://github.com/isl-org/Open3D в любую удобную папку.
 Затем для Windows необходимо изменить CMakeLists.txt, находящийся в основной папке клонированного репозитория, нужно ли это делать в Ubuntu я не знаю, в CMakeLists.txt необходимо добавить строку set(CMAKE_CUDA_FLAGS "--diag-suppress 221" CACHE STRING "Additional flags for nvcc" FORCE) после
+```
 # Build CUDA module by default if CUDA is available
 if(BUILD_CUDA_MODULE)
 До правки фрагмент кода выглядит так:
@@ -34,7 +35,9 @@ if(BUILD_CUDA_MODULE)
         endif()
     endif()
     ...
+```
 После правки:
+```
 ...
 # Build CUDA module by default if CUDA is available
 if(BUILD_CUDA_MODULE)
@@ -56,12 +59,13 @@ if(BUILD_CUDA_MODULE)
         endif()
     endif()
     ...
+```
 Без этого установка не будет закончена из-за ошибок.
 Затем открыть командную строку anaconda в папке клонированного репозитория и активировать среду выполнения: conda activate splatam.
 Затем выполнить инструкции, указанные на сайте https://www.open3d.org/docs/latest/compilation.html, для Windows начиная с пункта 2. Config.
 После выполнения инструкций Open3d должен быть установлен в запущенном окружении anaconda.
 
-Подготовка данных
+### Подготовка данных
 
 splatam ожидает, что данные будут представлены в виде файлов с изображениями формата .png, карт глубин для каждого изображения в виде файлов формата .png и файла transforms.json, в котором будут указаны некоторые параметры данных.
 Для получения нужных данных из видео нужно запустить скрипт get_RGB_D_from_svo.py, указав в нём свой путь до видео и пути к выходным папкам, в выходных папках не должно храниться других изображений формата .png. Затем для получения внутренних параметров камеры нужно запустить скрипт get_camera_intrinsics_from_svo.py, указав свой путь до видео. 
@@ -79,15 +83,17 @@ data/
 │   ├── 000002.png
 ├── transforms.json
 
-Запуск splatam
+#### Запуск splatam
 
 Нужно в файлах splatam найти \configs\iphone\splatam.py и заменить на указанный в этом репозитории, в нём хранятся настройки для выполнения скрипта splatam.
 В basedir необходимо указать свой путь до transforms.json
+```
 data=dict(
     ...
     basedir=#your path to transforms.json
     ...
 )
+```
 В workdir необходимо указать папку, куда будет записан вывод программы.
 Например, basedir='C:/Users/Admin/Documents/ZEDCodes/data',
 workdir = 'C:/Users/Admin/Documents/SplaTAM/experiments/ZED_reconstruction'
@@ -95,13 +101,15 @@ workdir = 'C:/Users/Admin/Documents/SplaTAM/experiments/ZED_reconstruction'
 Для запуска splatam необходимо в настроенном ранее окружении anaconda из папки, содержащей скачанный splatam выполнить python scripts/splatam.py configs/iphone/splatam.py
 После работы программы в выходной папке появится файл params.npz с параметрами полученных гауссианов.
 
-Визуализация
+##### Визуализация
 
 Можно изменить параметры визуализации в файле \configs\iphone\splatam_viz.py, а также в этом файле в scene_path неоходимо указать путь до params.npz
+```
 config = dict(
     scene_path= #your path to params.npz
     ...
 )
+```
 Например, scene_path='C:/Users/Admin/Documents/SplaTAM/experiments/ZED_reconstruction/SplaTAM_iPhone/params.npz'.
 Затем нужно запустить визуализацию командой python viz_scripts/final_recon.py configs/iphone/splatam_viz.py
 При успешном запуске откроется окно Open3D, в котором отобразятся гауссианы.
