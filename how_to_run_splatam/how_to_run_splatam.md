@@ -14,7 +14,9 @@
 ```
 # Build CUDA module by default if CUDA is available
 if(BUILD_CUDA_MODULE)
+```
 До правки фрагмент кода выглядит так:
+```
 ...
 # Build CUDA module by default if CUDA is available
 if(BUILD_CUDA_MODULE)
@@ -74,14 +76,14 @@ splatam ожидает, что данные будут представлены 
         "depth_path": f"depth/{depth}",
 так, чтобы они показывали относительные пути (по отношению к файлу transforms.json) к папкам с изображениями и глубинами.
 Структура папок у меня:
-data/
-├── rgb/
-│   ├── 000001.png
-│   ├── 000002.png
-├── depth/
-│   ├── 000001.png
-│   ├── 000002.png
-├── transforms.json
+data:
+  rgb:
+    000001.png
+    000002.png
+  depth:
+    000001.png
+    000002.png
+  transforms.json
 
 # Запуск splatam
 
